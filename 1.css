@@ -1,0 +1,12 @@
+
+body {
+    width: 600px;
+    margin: 0 auto;
+    padding: 0 20px 20px 20px;
+  }
+
+  h1 {
+    font-size: 60px;
+    color:aqua;
+    text-align: center;
+  }
