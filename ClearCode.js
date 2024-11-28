@@ -9,19 +9,17 @@ async function conc(url){
   });
   let a = await response.json();
   const {next} = a;
-  let b;
+  const b =[];
   if(next !== null){
-    b = await all.concat(await one_list(url));
-    console.log(b);
+    all.push(...await one_list(url));
     return await conc(next);
   }
-  b = await all.concat(await one_list(url));
-  let conca = [];
-  //for(let i =0; i<all.length; i++){
+  all.push(...await one_list(url));
+  console.log(all);
 
-  //}
+
   fs.writeFileSync('data.json', JSON.stringify(all));
-  return b;
+  return a;
 }
 
 let url = 'https://swapi.dev/api/starships';
