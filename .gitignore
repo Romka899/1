@@ -1,9 +1,4 @@
-node_modules/
-.vscode/
-1.css
-1.html
-1.js
-1.txt
+/node_modules
+/.vscode
 data.json
-data.txt
 package-lock.json

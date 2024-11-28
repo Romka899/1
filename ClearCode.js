@@ -2,7 +2,40 @@ import HttpsProxyAgent from "https-proxy-agent";
 import fetch, { blobFrom } from "node-fetch";
 import * as fs from "fs";
 
+let all =[];
+async function conc(url){
+  const response = await fetch(url,{
+    agent: new HttpsProxyAgent('http://proxy.compassplus.ru:3128')
+  });
+  let a = await response.json();
+  const {next} = a;
+  let b;
+  if(next !== null){
+    b = await all.concat(await one_list(url));
+    console.log(b);
+    return await conc(next);
+  }
+  b = await all.concat(await one_list(url));
+  let conca = [];
+  //for(let i =0; i<all.length; i++){
 
+  //}
+  fs.writeFileSync('data.json', JSON.stringify(all));
+  return b;
+}
+
+let url = 'https://swapi.dev/api/starships';
+console.log(await conc(url));
+
+
+async function one_list(url) {
+  const response = await fetch(url,{
+    agent: new HttpsProxyAgent('http://proxy.compassplus.ru:3128')
+  });
+  let OBJ = await response.json();
+  const {results} = OBJ;
+  return results;
+}
 
 
 async function ships(url){
@@ -12,24 +45,17 @@ async function ships(url){
     let Ship = await response.json();
     let Ships = [];
     const {results} = Ship;
-    for(let i = 0; i < results.length; i++){
-      const {name} = results[i];
-      const {cost_in_credits} = results[i];
-      const {created} = results[i];
-      Ships.push(name, cost_in_credits);
-  
-  
-    }
-  
-    let o = [];
-    for(let z = 0; z < Ships.length-1; z++){
-      let obj1 = {name: Ships[z], cost: Ships[z+1]}
-      o.push(obj1);
-      z++;
-    }
-    return o;
+
+    results.forEach(res =>{
+      const {name} = res;
+      const {cost_in_credits} = res;
+      let n_and_c = {name, cost_in_credits}
+      Ships.push(n_and_c);
+    });
+
+   return Ships;
   }
-  
+  /*
   ///
   
   async function cost_and_date(url){
@@ -41,7 +67,6 @@ async function ships(url){
     let Data = [];
   
     const {results} = Shipp;
-    const {next} = Shipp;
   
     results.forEach(res =>{
       const {name} = res;
@@ -52,13 +77,13 @@ async function ships(url){
       Data.push(name, created);
     })
   
-    const NoUnknown =  Summ.map((num, ind) =>{
+    const NoUnknown =  Summ.map((num) =>{
       num === 'unknown'
       ? (num = 0)
       : (num = num);
       return num;
     });
-  
+
     const NUnumb = NoUnknown.map(Number); 
     const SumOfNumbers = NUnumb.reduce((a, n) => a + n, 0);
   
@@ -70,7 +95,7 @@ async function ships(url){
       s.push(obj);
       j++;
     }
-      
+     
     s.sort(function(a, b){
       return (+new Date(b.date)) - (+new Date(a.date));
     });
@@ -99,7 +124,6 @@ async function ships(url){
     if(next !== null){
       be.push(await ships(url));
       su.push(await cost_and_date(url));
-      
       return await poka(next);
     }
     be.push(await ships(url));
@@ -111,3 +135,4 @@ async function ships(url){
   
   let url = 'https://swapi.dev/api/starships';
   console.log(await poka(url));
+  */
