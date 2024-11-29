@@ -3,6 +3,7 @@ import fetch, { blobFrom } from "node-fetch";
 import * as fs from "fs";
 
 let all =[];
+let su = [];
 async function conc(url){
   const response = await fetch(url,{
     agent: new HttpsProxyAgent('http://proxy.compassplus.ru:3128')
@@ -11,21 +12,23 @@ async function conc(url){
   const {next} = a;
   const b =[];
   if(next !== null){
-    all.push(...await one_list(url));
+    all.push(...await ships(url));
+    su.push(await cost_and_date(url));
     return await conc(next);
   }
-  all.push(...await one_list(url));
-  console.log(all);
+  all.push(...await ships(url));
+  su.push(await cost_and_date(url));
+  //console.log(all);
 
 
   fs.writeFileSync('data.json', JSON.stringify(all));
-  return a;
+  return su.reduce((a, n) => a + n, 0);;
 }
 
 let url = 'https://swapi.dev/api/starships';
 console.log(await conc(url));
 
-
+/*
 async function one_list(url) {
   const response = await fetch(url,{
     agent: new HttpsProxyAgent('http://proxy.compassplus.ru:3128')
@@ -34,7 +37,7 @@ async function one_list(url) {
   const {results} = OBJ;
   return results;
 }
-
+*/
 
 async function ships(url){
     const response = await fetch(url,{
@@ -53,7 +56,7 @@ async function ships(url){
 
    return Ships;
   }
-  /*
+  
   ///
   
   async function cost_and_date(url){
@@ -110,7 +113,7 @@ async function ships(url){
     
     return SumOfNumbers;
   }
-  
+  /*
   let be = [];
   let su = [];
   async function poka(url){
